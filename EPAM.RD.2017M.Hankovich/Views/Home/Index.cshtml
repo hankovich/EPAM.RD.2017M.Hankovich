@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE html>
 <html ng-app="books">
 <head>
+    <base href="/">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Books</title>
@@ -8,26 +9,28 @@
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <script src="~/Scripts/modernizr-2.6.2.js"></script>
     <script src="~/Scripts/angular.js"></script>
+    <script src="~/Scripts/angular-route.js"></script>
     <script src="~/Scripts/scripts/IndexController.js"></script>
 </head>
 <body ng-controller="IndexController">
+<a href="/gaga/gaga">jdfjhsgjdhgs</a>
 <div>
     <input type="text" class="form-control" placeholder="Enter name" ng-model="user.name"/>
     <input type="text" class="form-control" placeholder="Enter src" ng-model="user.src"/>
-    <input type="text" class="form-control" placeholder="Enter albumn" ng-model="user.albumn"/>
-    <input type="button" class="btn btn-primary" value="Add" ng-click="add(user.name, user.src, user.albumn)"/>
+    <input type="text" class="form-control" placeholder="Enter albumn" ng-model="user.album"/>
+    <input type="button" class="btn btn-primary" value="Add" ng-click="add(user.name, user.src, user.album)"/>
 </div>
     <div class="container">
-        <div ng-repeat="albumn in albumns" class="row well" style="padding-top: 15px;">
-            <h2>{{albumn.albumnName}}</h2>
-            <div ng-repeat="photo in albumn.photos" class="col-md-4" style="padding-top: 15px;">
+        <div ng-repeat="album in albums" class="row well" style="padding-top: 15px;">
+            <h2>{{album.albumName}}</h2>
+            <div ng-repeat="photo in album.photos" class="col-md-4" style="padding-top: 15px;">
                 <div class="thumbnail panel-info" style="padding-top: 10px; padding-left: 10px; padding-right: 10px; padding-bottom: 10px;">
                     <div class="row">
                         <div class="col-md-4">
                             <div class="text-primary">
                                 <h5>{{photo.name}}</h5>
                             </div>
-                            <input type="button" class="btn btn-danger bottom-left" value="Delete" ng-click="remove($index, albumn.albumnName)" />
+                            <input type="button" class="btn btn-danger bottom-left" value="Delete" ng-click="remove($index, album.albumName)" />
                         </div>
                         <img class="col-md-8" ng-src="{{photo.src}}" alt="" />
                     </div>

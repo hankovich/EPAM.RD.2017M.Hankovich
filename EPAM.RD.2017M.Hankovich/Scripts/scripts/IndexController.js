@@ -1,9 +1,28 @@
-﻿angular.module('books', [])
-    .controller('IndexController', ['$scope', '$http', function ($scope, $http) {
-        //jojo
-        $scope.albumns = [
+﻿angular.module('books', ['ngRoute'])
+    .controller('IndexController', ['$scope', 'dataService', '$http', function ($scope, dataService, $http) {
+
+        $scope.albums = dataService.getAll();
+
+        $scope.remove = function(index, albumName){
+            dataService.remove(index, albumName);
+        }
+
+        $scope.add = function(name, src, album)
+        {
+            if (!dataService.add(name, src, album))
+                alert("Name, src and album is required!");
+        }
+
+        $scope.user = {
+            name: "",
+            src: "",
+            album: ""
+        };
+    }])
+.service('dataService', function () {
+    var albums = [
             {
-                albumnName: "First",
+                albumName: "First",
                 photos: [
                 {
                     name: "1984",
@@ -16,7 +35,7 @@
                 ]
             },
             {
-                albumnName: "Second",
+                albumName: "Second",
                 photos: [
                 {
                     name: "Harry Potter",
@@ -28,37 +47,59 @@
                 }
                 ]
             }
-        ];
+    ];
 
-        $scope.remove = function(index, albumnName){
-            for (var i = 0; i < $scope.albumns.length; i++) {
-                if ($scope.albumns[i].albumnName === albumnName) {
-                    $scope.albumns[i].photos.splice(index, 1);
+    function getAll() {
+        return albums;
+    }
+
+    function add(name, src, album) {
+        if (name !== "" && src !== "" && album !== "") {
+            var needSomeNewAlbum = true;
+            for (var i = 0; i < albums.length; i++) {
+                if (albums[i].albumName === album) {
+                    albums[i].photos.push({ name, src });
+                    needSomeNewAlbum = false;
                 }
             }
+
+            if (needSomeNewAlbum) {
+                albums.push({ albumName: album, photos: [{ name: name, src: src }] });
+            }
+            return true;
+        } else {
+            return false;
         }
+    };
 
-        $scope.add = function(name, src, albumn)
-        {
-            if (name !== "" && src !== "" && albumn !== "") {
-                var needSomeNewAlbumns = true;
-                for (var i = 0; i < $scope.albumns.length; i++) {
-                    if ($scope.albumns[i].albumnName === albumn) {
-                        $scope.albumns[i].photos.push({ name, src });
-                        needSomeNewAlbumns = false;
-                    }
-                }
-
-                if (needSomeNewAlbumns) {
-                    $scope.albumns.push({ albumnName: albumn, photos: [{name: name, src: src}]});
-                }
-            } else
-                alert("name and src are required!");
+    function remove(index, albumName) {
+        for (var i = 0; i < albums.length; i++) {
+            if (albums[i].albumName === albumName) {
+                albums[i].photos.splice(index, 1);
+            }
         }
+    };
 
-        $scope.user = {
-            name: "",
-            src: "",
-            albumn: ""
-        };
-}]);
+    return {
+        getAll: getAll,
+        add: add,
+        remove: remove
+    }
+})
+
+.config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider){
+    $routeProvider
+    .when('/AngularRoute/',{
+        templateUrl: '/',
+        controller: 'IndexController'
+    })
+    .when('/gaga/gaga', {
+        templateUrl: 'Views/View.html',
+        controller: 'IndexController'
+    })
+    .otherwise({
+        redirectTo: '/'
+    });
+
+    $locationProvider.html5Mode(true);
+}])
