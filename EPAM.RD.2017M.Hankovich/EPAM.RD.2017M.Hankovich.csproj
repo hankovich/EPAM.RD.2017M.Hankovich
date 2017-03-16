@@ -142,6 +142,8 @@
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\scripts\IndexController.js" />
+    <Content Include="Views\Home\Index.html" />
+    <Content Include="Views\Home\View.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

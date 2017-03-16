@@ -93,8 +93,12 @@
         templateUrl: '/',
         controller: 'IndexController'
     })
-    .when('/gaga/gaga', {
-        templateUrl: 'Views/View.html',
+    .when('/Index/', {
+        templateUrl: '/Views/Home/Index.html',
+        controller: 'IndexController'
+    })
+    .when('/Temp/', {
+        templateUrl: '/Views/Home/View.html',
         controller: 'IndexController'
     })
     .otherwise({
