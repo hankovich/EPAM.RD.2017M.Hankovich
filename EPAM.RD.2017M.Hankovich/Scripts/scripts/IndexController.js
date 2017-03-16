@@ -2,6 +2,19 @@
     .controller('IndexController', ['$scope', 'dataService', '$http', function ($scope, dataService, $http) {
 
         $scope.albums = dataService.getAll();
+        $scope.descrEditMode = false;
+
+        $scope.editDescr = function () {
+            $scope.descrEditMode = true;
+        }
+
+        $scope.saveDescr = function (newDescr) {
+            dataService.editDescr(newDescr);
+            $scope.descrEditMode = false;
+            $scope.descr = dataService.descr();
+        }
+
+        $scope.descr = dataService.descr();
 
         $scope.remove = function(index, albumName){
             dataService.remove(index, albumName);
@@ -18,6 +31,8 @@
             src: "",
             album: ""
         };
+
+        $scope.newDescr = $scope.descr;
     }])
 .service('dataService', function () {
     var albums = [
@@ -26,11 +41,13 @@
                 photos: [
                 {
                     name: "1984",
-                    src: "http://www.livelib.ru/reader/jennlawer/o/q2vh8epd/o-o.jpeg"
+                    src: "http://www.livelib.ru/reader/jennlawer/o/q2vh8epd/o-o.jpeg",
+                    descr: "Good book"
                 },
                 {
                     name: "Holy Bible",
-                    src: "https://pbs.twimg.com/profile_images/597441961814032384/x6jCddhT.jpg"
+                    src: "https://pbs.twimg.com/profile_images/597441961814032384/x6jCddhT.jpg",
+                    descr: "Very good book"
                 }
                 ]
             },
@@ -39,15 +56,23 @@
                 photos: [
                 {
                     name: "Harry Potter",
-                    src: "https://i.ytimg.com/vi/40egrwx44vw/maxresdefault.jpg"
+                    src: "https://i.ytimg.com/vi/40egrwx44vw/maxresdefault.jpg",
+                    descr: "Harry Potter Potter"
                 },
                 {
                     name: "TOUNIEJADTSYI",
-                    src: "http://www.nndb.com/people/022/000098725/alexander-lukashenko-1.jpg"
+                    src: "http://www.nndb.com/people/022/000098725/alexander-lukashenko-1.jpg",
+                    descr: "Lu-Ka-Shen-Ko"
                 }
                 ]
             }
     ];
+
+    var text = "Descr";
+
+    function descr() {
+        return text;
+    }
 
     function getAll() {
         return albums;
@@ -80,10 +105,16 @@
         }
     };
 
+    function editDescr(newDescr) {
+        text = newDescr;
+    }
+
     return {
         getAll: getAll,
         add: add,
-        remove: remove
+        remove: remove,
+        descr: descr,
+        editDescr: editDescr
     }
 })
 
@@ -93,14 +124,19 @@
         templateUrl: '/',
         controller: 'IndexController'
     })
-    .when('/Index/', {
+    .when('/AngularRoute/Index/', {
         templateUrl: '/Views/Home/Index.html',
         controller: 'IndexController'
     })
-    .when('/Temp/', {
+    .when('/AngularRoute/Temp/', {
         templateUrl: '/Views/Home/View.html',
         controller: 'IndexController'
     })
+    .when('/AngularRoute/Edit/', {
+        templateUrl: '/Views/Home/Edit.html',
+        controller: 'IndexController'
+    })
+
     .otherwise({
         redirectTo: '/'
     });

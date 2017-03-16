@@ -13,9 +13,11 @@
     <script src="~/Scripts/scripts/IndexController.js"></script>
 </head>
 <body ng-controller="IndexController">
-    <div class="container well">
-        <h1>Angular main page</h1>
-        <a href="/Index">Index</a> | <a href="/Temp">Temp</a>
+<header class="container well">
+    <h1>Angular main page</h1>
+    <a href="AngularRoute/Index">Index</a> | <a href="AngularRoute/Temp">Temp</a> | <a href="AngularRoute/Edit">Edit</a>
+</header>
+    <div class="container">
         <div ng-view>Loading...</div>
     </div>
 </body>
