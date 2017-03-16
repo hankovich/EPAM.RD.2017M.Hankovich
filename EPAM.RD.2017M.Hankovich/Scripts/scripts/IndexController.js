@@ -1,7 +1,10 @@
 ﻿angular.module('books', ['ngRoute'])
     .controller('IndexController', ['$scope', 'dataService', '$http', function ($scope, dataService, $http) {
 
-        $scope.albums = dataService.getAll();
+        dataService.getAll().then(function(response) {
+            $scope.albums = response.data;
+        });
+
         $scope.descrEditMode = false;
 
         $scope.editDescr = function () {
@@ -17,7 +20,13 @@
         $scope.descr = dataService.descr();
 
         $scope.remove = function(index, albumName){
-            dataService.remove(index, albumName);
+            //dataService.remove(index, albumName);
+            for (var i = 0; i < $scope.albums.length; i++) {
+                if ($scope.albums[i].albumName === albumName) {
+                    $scope.albums[i].photos.splice(index, 1);
+                }
+            }
+            //
         }
 
         $scope.add = function(name, src, album)
@@ -34,8 +43,8 @@
 
         $scope.newDescr = $scope.descr;
     }])
-.service('dataService', function () {
-    var albums = [
+.service('dataService',['$http', function ($http) {
+    /*var albums = [
             {
                 albumName: "First",
                 photos: [
@@ -66,7 +75,7 @@
                 }
                 ]
             }
-    ];
+    ];*/
 
     var text = "Descr";
 
@@ -75,7 +84,10 @@
     }
 
     function getAll() {
-        return albums;
+        var response = $http({
+            url: '/Home/GetAlbums'
+        });
+        return response;
     }
 
     function add(name, src, album) {
@@ -116,7 +128,7 @@
         descr: descr,
         editDescr: editDescr
     }
-})
+}])
 
 .config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider){
     $routeProvider
