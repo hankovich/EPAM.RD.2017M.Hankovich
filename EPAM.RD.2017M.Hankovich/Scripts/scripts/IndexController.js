@@ -1,6 +1,22 @@
 ﻿angular.module('books', ['ngRoute'])
     .controller('IndexController', [
-        '$scope', 'dataService', '$http', function($scope, dataService, $http) {
+        '$scope', 'dataService', '$http', function ($scope, dataService, $http) {
+
+            $scope.addImg = function () {
+                var f = document.getElementById('file').files[0],
+                    r = new FileReader();
+                r.onloadend = function (e) {
+                    var data = e.target.result;
+                    var response = {
+                        method: "POST",
+                        url: "/Home/AddImg",
+                        data: data.data
+                    }
+                    $http(response);
+                    //send your binary data via $http or $resource or do anything else with it
+                }
+                r.readAsBinaryString(f);
+            }
 
             dataService.getAll().then(function(response) {
                 $scope.albums = response.data;
@@ -36,12 +52,12 @@
                 };
 
                 $http(request)
-                    .then(function (response) {
-                        //alert('success');
-                    },
-                    function(response) {
-                        //alert('fail');
-                    });
+                    .then(function(response) {
+                            //alert('success');
+                        },
+                        function(response) {
+                            //alert('fail');
+                        });
                 //
             }
 
@@ -187,7 +203,7 @@
             return {
                 restrict: 'E',
                 replace: true,
-                scope: { name:'=', src: '=', album: '='},
+                scope: { name: '=', src: '=', album: '=' },
                 templateUrl: '/Views/Home/Preview.html'
             }
         }

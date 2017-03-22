@@ -4,6 +4,11 @@
         <input type="text" class="form-control" id="src" placeholder="Enter src" ng-model="user.src"/>
         <input type="text" class="form-control" id="album" placeholder="Enter album" ng-model="user.album"/>
         <input type="button" class="btn btn-primary" value="Add" ng-click="add(user.name, user.src, user.album)"/>
+
+
+
+        <input type="file" id="file" name="file" />
+        <button ng-click="addImg()">Add</button>
     </div>
     <div class="col-md-6">
         <preview-img name="user.name" src="user.src" album="user.album"/>

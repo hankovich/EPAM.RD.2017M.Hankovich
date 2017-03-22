@@ -24,6 +24,7 @@ namespace GalleryTests
                 try
                 {
                     driver.FindElement(By.Id("Angl")).Click();
+                    System.Threading.Thread.Sleep(1000);
                 }
                 catch(NoSuchElementException)
                 {
