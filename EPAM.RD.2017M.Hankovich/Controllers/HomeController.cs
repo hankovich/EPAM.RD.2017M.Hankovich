@@ -20,29 +20,34 @@ namespace EPAM.RD._2017M.Hankovich.Controllers
         public ActionResult GetAlbums()
         {
             GalleryModel model = new GalleryModel();
-            List<AlbumModel> models = new List<AlbumModel>();
-            foreach (var album in model.Albums)
+
+            List<AlbumModel> models = model.Albums.Select(album => new AlbumModel
             {
-                models.Add(new AlbumModel
+                Id = album.Id,
+                albumName = album.AlbumName,
+                photos = model.Photos.Where(photo => photo.AlbumId == album.Id).Select(photo => new PhotoModel
                 {
-                    Id = album.Id,
-                    albumName = album.AlbumName,
-                    photos = model.Photos.Where(photo => photo.AlbumId == album.Id).Select(photo => new PhotoModel
-                    {
-                        Id = photo.Id,
-                        AlbumId = photo.AlbumId,
-                        CreationDate = photo.CreationDate,
-                        descr = photo.Description,
-                        name = photo.Title,
-                        RateCount = photo.RateCount,
-                        TotalRate = photo.TotalRate,
-                        src = photo.Path
-                    })
-                });
-            }
+                    Id = photo.Id,
+                    AlbumId = photo.AlbumId,
+                    CreationDate = photo.CreationDate,
+                    descr = photo.Description,
+                    name = photo.Title,
+                    RateCount = photo.RateCount,
+                    TotalRate = photo.TotalRate,
+                    src = photo.Path
+                })
+            }).ToList();
+
             var result = Json(models, JsonRequestBehavior.AllowGet);
 
             return result;
+        }
+
+        public void RemoveImg(PhotoToDeleteModel model)
+        {
+            //some removing logic here
+            var a = model.AlbumName;
+            //return false;
         }
     }
 }

@@ -7,7 +7,7 @@
                     <div class="text-primary">
                         <h5>{{photo.name}}</h5>
                     </div>
-                    <input type="button" class="btn btn-danger bottom-left" value="Delete" ng-click="remove($index, album.albumName)" />
+                    <input type="button" class="btn btn-danger bottom-left" value="Delete" ng-click="remove($index, album.albumName, photo.Id)" />
                 </div>
                 <img class="col-md-8" ng-src="{{photo.src}}" alt="" />
             </div>
