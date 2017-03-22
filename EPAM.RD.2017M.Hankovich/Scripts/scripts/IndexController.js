@@ -37,10 +37,10 @@
 
                 $http(request)
                     .then(function (response) {
-                        alert('success');
+                        //alert('success');
                     },
                     function(response) {
-                        alert('fail');
+                        //alert('fail');
                     });
                 //
             }

@@ -1,9 +1,9 @@
 ﻿<div class="well">
     <div ng-show="!descrEditMode" class="ng-show btn-group">{{descr}}</div>
     <div ng-show="descrEditMode" class="ng-hide row">
-        <input type="text" ng-model="newDescr" class="form-control btn-group"/>
-        <input type="button" value="Save" class="btn btn-info btn-group" ng-click="saveDescr(newDescr)" />
+        <input type="text" id="text" ng-model="newDescr" class="form-control btn-group"/>
+        <input type="button" id="save" value="Save" class="btn btn-info btn-group" ng-click="saveDescr(newDescr)" />
     </div>
-    <input ng-show="!descrEditMode" class="ng-show btn btn-default btn-group" type="button" value="Edit" ng-click="editDescr()"/>
+    <input ng-show="!descrEditMode" class="ng-show btn btn-default btn-group" type="button" id="Change" value="Edit" ng-click="editDescr()"/>
     <my-user>qwe</my-user>
 </div>
