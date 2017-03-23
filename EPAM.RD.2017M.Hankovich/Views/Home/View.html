@@ -1,16 +1,17 @@
 ﻿<div class="well row">
     <div class="col-md-6">
-        <input type="text" class="form-control" id="name" placeholder="Enter name" ng-model="user.name"/>
-        <input type="text" class="form-control" id="src" placeholder="Enter src" ng-model="user.src"/>
-        <input type="text" class="form-control" id="album" placeholder="Enter album" ng-model="user.album"/>
-        <input type="button" class="btn btn-primary" value="Add" ng-click="add(user.name, user.src, user.album)"/>
+        <input type="text" class="form-control asd" id="name" placeholder="Enter name" ng-model="user.name"/>
+        <input type="text" class="form-control asd" id="album" placeholder="Enter album" ng-model="user.album"/>
+        <div class="btn-group asd">
+            <input type="button" class="btn btn-primary" value="Url" ng-click="setFilemode(false)"/>
+            <input type="button" class="btn btn-primary" value="File" ng-click="setFilemode(true)" />
+        </div>        
+        <input type="file" class="form-control asd" id="file" ng-show="filemode" name="file" file-change="user.file" ng-model="user.file"/>
+        <input type="text" class="form-control asd" id="src" ng-show="!filemode" placeholder="Enter src" ng-model="user.src" />
 
-
-
-        <input type="file" id="file" name="file" />
-        <button ng-click="addImg()">Add</button>
+        <input type="button" class="btn btn-primary asd" value="Add" ng-click="addImg(user.name, user.src, user.album, user.file)"/>
     </div>
     <div class="col-md-6">
-        <preview-img name="user.name" src="user.src" album="user.album"/>
+        <preview-img name="user.name" src="user.src" file="user.file" album="user.album"/>
     </div>
 </div>

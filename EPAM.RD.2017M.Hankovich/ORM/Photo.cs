@@ -9,7 +9,6 @@ namespace EPAM.RD._2017M.Hankovich.ORM
     [Table("Photo")]
     public partial class Photo
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
         public int AlbumId { get; set; }

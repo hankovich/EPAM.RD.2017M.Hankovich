@@ -2,33 +2,31 @@
     .controller('IndexController', [
         '$scope', 'dataService', '$http', function ($scope, dataService, $http) {
 
-            $scope.addImg = function () {
-                var f = document.getElementById('file').files[0],
-                    r = new FileReader();
-                r.onloadend = function (e) {
-                    var data = e.target.result;
-                    var response = {
-                        method: "POST",
-                        url: "/Home/AddImg",
-                        data: data.data
-                    }
-                    $http(response);
-                    //send your binary data via $http or $resource or do anything else with it
-                }
-                r.readAsBinaryString(f);
+            $scope.addImg = function (name, src, album, file) {
+                dataService.addImg(name, src, album, file);
             }
 
-            dataService.getAll().then(function(response) {
+            dataService.getAll().then(function (response) {
                 $scope.albums = response.data;
             });
 
             $scope.descrEditMode = false;
 
-            $scope.editDescr = function() {
+            $scope.filemode = true;
+
+            $scope.setFilemode = function (value) {
+                $scope.filemode = value;
+                if (value == false)
+                    $scope.user.file = "";
+                else
+                    $scope.user.url = "";
+            }
+
+            $scope.editDescr = function () {
                 $scope.descrEditMode = true;
             }
 
-            $scope.saveDescr = function(newDescr) {
+            $scope.saveDescr = function (newDescr) {
                 dataService.editDescr(newDescr);
                 $scope.descrEditMode = false;
                 $scope.descr = dataService.descr();
@@ -36,7 +34,7 @@
 
             $scope.descr = dataService.descr();
 
-            $scope.remove = function(index, albumName, photoId) {
+            $scope.remove = function (index, albumName, photoId) {
                 //dataService.remove(index, albumName);
                 for (var i = 0; i < $scope.albums.length; i++) {
                     if ($scope.albums[i].albumName === albumName) {
@@ -52,16 +50,16 @@
                 };
 
                 $http(request)
-                    .then(function(response) {
-                            //alert('success');
-                        },
-                        function(response) {
+                    .then(function (response) {
+                        //alert('success');
+                    },
+                        function (response) {
                             //alert('fail');
                         });
                 //
             }
 
-            $scope.add = function(name, src, album) {
+            $scope.add = function (name, src, album) {
                 if (!dataService.add(name, src, album))
                     alert("Name, src and album is required!");
             }
@@ -69,46 +67,15 @@
             $scope.user = {
                 name: "",
                 src: "",
-                album: ""
+                album: "",
+                file: ""
             };
 
             $scope.newDescr = $scope.descr;
         }
     ])
     .service('dataService', [
-        '$http', function($http) {
-            /*var albums = [
-                    {
-                        albumName: "First",
-                        photos: [
-                        {
-                            name: "1984",
-                            src: "http://www.livelib.ru/reader/jennlawer/o/q2vh8epd/o-o.jpeg",
-                            descr: "Good book"
-                        },
-                        {
-                            name: "Holy Bible",
-                            src: "https://pbs.twimg.com/profile_images/597441961814032384/x6jCddhT.jpg",
-                            descr: "Very good book"
-                        }
-                        ]
-                    },
-                    {
-                        albumName: "Second",
-                        photos: [
-                        {
-                            name: "Harry Potter",
-                            src: "https://i.ytimg.com/vi/40egrwx44vw/maxresdefault.jpg",
-                            descr: "Harry Potter Potter"
-                        },
-                        {
-                            name: "TOUNIEJADTSYI",
-                            src: "http://www.nndb.com/people/022/000098725/alexander-lukashenko-1.jpg",
-                            descr: "Lu-Ka-Shen-Ko"
-                        }
-                        ]
-                    }
-            ];*/
+        '$http', function ($http) {
 
             var text = "Descr";
 
@@ -123,8 +90,20 @@
                 return response;
             }
 
-            function add(name, src, album) {
-                if (name !== "" && src !== "" && album !== "") {
+            function add(name, src, album, file) {
+
+                var response = $http({
+                    method: 'POST',
+                    url: '/Home/AddImg',
+                    data: {
+                        name: name,
+                        src: src,
+                        album: album,
+                        file: file
+                    },
+                    header: { 'Accept': 'application/json' }
+                });
+                /*if (name !== "" && src !== "" && album !== "") {
                     var needSomeNewAlbum = true;
                     for (var i = 0; i < albums.length; i++) {
                         if (albums[i].albumName === album) {
@@ -139,7 +118,7 @@
                     return true;
                 } else {
                     return false;
-                }
+                }*/
             };
 
             function remove(index, albumName) {
@@ -156,7 +135,7 @@
 
             return {
                 getAll: getAll,
-                add: add,
+                addImg: add,
                 remove: remove,
                 descr: descr,
                 editDescr: editDescr
@@ -164,7 +143,7 @@
         }
     ])
     .config([
-        '$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {
+        '$locationProvider', '$routeProvider', function ($locationProvider, $routeProvider) {
             $routeProvider
                 .when('/AngularRoute/', {
                     templateUrl: '/',
@@ -190,7 +169,7 @@
         }
     ])
     .directive('myUser', [
-        function() {
+        function () {
             return {
                 restrict: 'E',
                 replace: true,
@@ -199,12 +178,29 @@
         }
     ])
     .directive('previewImg', [
-        function() {
+        function () {
             return {
                 restrict: 'E',
                 replace: true,
-                scope: { name: '=', src: '=', album: '=' },
+                scope: { name: '=', src: '=', album: '=' , file: '='},
                 templateUrl: '/Views/Home/Preview.html'
             }
         }
-    ]);
+    ]).directive("fileChange", [function () {
+        return {
+            scope: {
+                fileChange: "="
+            },
+            link: function (scope, element, attributes) {
+                element.bind("change", function (changeEvent) {
+                    var reader = new FileReader();
+                    reader.onload = function (loadEvent) {
+                        scope.$apply(function () {
+                            scope.fileChange = loadEvent.target.result;
+                        });
+                    }
+                    reader.readAsDataURL(changeEvent.target.files[0]);
+                });
+            }
+        }
+    }]);

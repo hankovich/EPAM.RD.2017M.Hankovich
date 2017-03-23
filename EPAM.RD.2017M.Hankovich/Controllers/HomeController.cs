@@ -7,6 +7,8 @@ using System.Web.Helpers;
 using System.Web.Mvc;
 using EPAM.RD._2017M.Hankovich.Models;
 using EPAM.RD._2017M.Hankovich.ORM;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace EPAM.RD._2017M.Hankovich.Controllers
 {
@@ -35,7 +37,7 @@ namespace EPAM.RD._2017M.Hankovich.Controllers
                     name = photo.Title,
                     RateCount = photo.RateCount,
                     TotalRate = photo.TotalRate,
-                    src = photo.Path
+                    src = photo.Path.StartsWith("http") ? photo.Path : photo.Path.Remove(0, 90)
                 })
             }).ToList();
 
@@ -52,27 +54,54 @@ namespace EPAM.RD._2017M.Hankovich.Controllers
         }
 
         [HttpPost]
-        public void AddImg()
+        public void AddImg(string name, string src, string album, string file)
         {
-            foreach (string file in Request.Files)
-            {
-                HttpPostedFileBase hpf = Request.Files[file] as HttpPostedFileBase;
-                if (hpf.ContentLength > 0)
-                {
-                    string folderPath = Server.MapPath("~/ServerFolderPath");
-                    Directory.CreateDirectory(folderPath);
+            string path = GetPathToImg($"{RsHash(file)}.{file.Split('/', ';')[1]}");
+            GalleryModel model = new GalleryModel();
 
-                    string savedFileName = Server.MapPath("~/ServerFolderPath/" + hpf.FileName);
-                    hpf.SaveAs(savedFileName);
-                    //return Content("File Uploaded Successfully");
-                }
-                else
+            if (model.Photos.Where(x => x.Path == path).Count() == 0)
+            {
+                var bytes = Convert.FromBase64String(file.Split(',')[1]);
+
+                using (var imageFile = new FileStream(path, FileMode.Create))
                 {
-                    //return Content("Invalid File");
+                    imageFile.Write(bytes, 0, bytes.Length);
+                    imageFile.Flush();
                 }
-                //model1.Image = "~/ServerFolderPath/" + hpf.FileName;
             }
-            //var a = img.FileName;
+
+            model.Photos.Add(new Photo
+            {
+                Path = path,
+                AlbumId = 2,
+                Title = name,
+                RateCount = 0,
+                TotalRate = 0,
+                Description = "qeqwe",
+                CreationDate = DateTime.Now,
+            });
+
+            model.SaveChanges();
+        }
+
+        private string GetPathToImg(string filename)
+        {
+            string serverPath = Server.MapPath("~");
+            return Path.Combine(serverPath, "Content", "img", filename);
+        }
+
+        private static int RsHash(string str)
+        {
+            const int b = 378551;
+            int a = 63689;
+            int hash = 0;
+
+            foreach (char t in str)
+            {
+                hash = hash * a + t;
+                a *= b;
+            }
+            return hash;
         }
     }
 }
