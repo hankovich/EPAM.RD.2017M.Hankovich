@@ -2,8 +2,8 @@
     .controller('IndexController', [
         '$scope', 'dataService', '$http', function ($scope, dataService, $http) {
 
-            $scope.addImg = function (name, src, album, file) {
-                dataService.addImg(name, src, album, file);
+            $scope.addImg = function (name, src, album, file, description) {
+                dataService.addImg(name, src, album, file, description);
             }
 
             dataService.getAll().then(function (response) {
@@ -16,10 +16,11 @@
 
             $scope.setFilemode = function (value) {
                 $scope.filemode = value;
-                if (value == false)
-                    $scope.user.file = "";
-                else
-                    $scope.user.url = "";
+                if (value === false) {
+                    angular.element("input[type='file']").val(null);
+                    $scope.user.file = 'dd';
+                } else
+                    $scope.user.src = '';
             }
 
             $scope.editDescr = function () {
@@ -68,7 +69,8 @@
                 name: "",
                 src: "",
                 album: "",
-                file: ""
+                file: "",
+                descripton: ""
             };
 
             $scope.newDescr = $scope.descr;
@@ -90,7 +92,7 @@
                 return response;
             }
 
-            function add(name, src, album, file) {
+            function add(name, src, albumName, file, description) {
 
                 var response = $http({
                     method: 'POST',
@@ -98,8 +100,9 @@
                     data: {
                         name: name,
                         src: src,
-                        album: album,
-                        file: file
+                        albumName: albumName,
+                        file: file,
+                        description: description
                     },
                     header: { 'Accept': 'application/json' }
                 });
@@ -168,25 +171,17 @@
             $locationProvider.html5Mode(true);
         }
     ])
-    .directive('myUser', [
-        function () {
-            return {
-                restrict: 'E',
-                replace: true,
-                templateUrl: '/Views/Home/View.html'
-            }
-        }
-    ])
     .directive('previewImg', [
         function () {
             return {
                 restrict: 'E',
                 replace: true,
-                scope: { name: '=', src: '=', album: '=' , file: '='},
+                scope: { name: '=', src: '=', album: '=', file: '=', description: '='},
                 templateUrl: '/Views/Home/Preview.html'
             }
         }
-    ]).directive("fileChange", [function () {
+    ])
+    .directive("fileChange", [function () {
         return {
             scope: {
                 fileChange: "="
@@ -203,4 +198,5 @@
                 });
             }
         }
-    }]);
+    }])
+    ;

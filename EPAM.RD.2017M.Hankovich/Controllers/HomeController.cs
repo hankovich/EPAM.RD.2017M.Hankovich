@@ -54,12 +54,20 @@ namespace EPAM.RD._2017M.Hankovich.Controllers
         }
 
         [HttpPost]
-        public void AddImg(string name, string src, string album, string file)
+        public void AddImg(string name, string src, string albumName, string file, string description)
         {
             string path = GetPathToImg($"{RsHash(file)}.{file.Split('/', ';')[1]}");
             GalleryModel model = new GalleryModel();
 
-            if (model.Photos.Where(x => x.Path == path).Count() == 0)
+            if (model.Albums.Count(album => album.AlbumName == albumName) == 0)
+            {
+                model.Albums.Add(new Album
+                {
+                    AlbumName = albumName
+                });
+            }
+            model.SaveChanges();
+            if (model.Photos.Count(x => x.Path == path) == 0)
             {
                 var bytes = Convert.FromBase64String(file.Split(',')[1]);
 
@@ -73,11 +81,11 @@ namespace EPAM.RD._2017M.Hankovich.Controllers
             model.Photos.Add(new Photo
             {
                 Path = path,
-                AlbumId = 2,
+                AlbumId = model.Albums.FirstOrDefault(album => album.AlbumName == albumName).Id,
                 Title = name,
                 RateCount = 0,
                 TotalRate = 0,
-                Description = "qeqwe",
+                Description = description,
                 CreationDate = DateTime.Now,
             });
 

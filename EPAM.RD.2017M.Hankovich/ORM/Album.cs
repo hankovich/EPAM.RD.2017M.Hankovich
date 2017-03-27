@@ -15,7 +15,6 @@ namespace EPAM.RD._2017M.Hankovich.ORM
             Photos = new HashSet<Photo>();
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
         [Required]

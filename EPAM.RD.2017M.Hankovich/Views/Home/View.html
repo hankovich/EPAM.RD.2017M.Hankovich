@@ -9,9 +9,10 @@
         <input type="file" class="form-control asd" id="file" ng-show="filemode" name="file" file-change="user.file" ng-model="user.file"/>
         <input type="text" class="form-control asd" id="src" ng-show="!filemode" placeholder="Enter src" ng-model="user.src" />
 
-        <input type="button" class="btn btn-primary asd" value="Add" ng-click="addImg(user.name, user.src, user.album, user.file)"/>
+        <textarea ng-model="user.description" placeholder="Enter description" class="form-control asd"></textarea> 
+        <input type="button" class="btn btn-primary asd" value="Add" ng-click="addImg(user.name, user.src, user.album, user.file, user.description)"/>
     </div>
     <div class="col-md-6">
-        <preview-img name="user.name" src="user.src" file="user.file" album="user.album"/>
+        <preview-img name="user.name" src="user.src" album="user.album" file="user.file" description="user.description"/>
     </div>
 </div>
