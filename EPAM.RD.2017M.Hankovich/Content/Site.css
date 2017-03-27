@@ -15,6 +15,13 @@
 .asd {
     margin: 10px;
 }
+
+.awesome-view {
+    padding-top: 10px; 
+    padding-left: 10px; 
+    padding-right: 10px; 
+    padding-bottom: 10px;
+}
 /* Set width on the form input elements since they're 100% wide by default */
 input,
 select,

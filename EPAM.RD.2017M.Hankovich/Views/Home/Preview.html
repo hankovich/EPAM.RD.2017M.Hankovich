@@ -1,15 +1,18 @@
-﻿<div>
-    <div class="">
-        <p>Name: {{name}}</p>
+﻿<div class="thumbnail panel-info awesome-view asd">
+    <div>
+        <h3 class="asd">{{name}}</h3>
+        <div ng-if="preview" date-now="MMM dd yyyy hh:mm" class="asd"/>
+        <div ng-if="!preview" class="asd">
+            {{date}}
+        </div>
     </div>
-    <div class="">
-        <img ng-src="{{src}}" width="300" alt="" />
+    <img ng-src="{{src}}" width="300" ng-show="src != ''" />
+    
+    <div class="caption">
+        <h4>{{description}}</h4>
     </div>
-    <div class="">
-        <p>Album: {{album}}</p>
+
+    <div ng-if="!preview">
+        <input type="button" class="btn btn-danger bottom-left" value="Delete" ng-click="remove(index, album, photoid)" />
     </div>
-    <div class="">
-        <p>Description: {{description}}</p>
-    </div>
-    File: <img ng-src="{{file}}" width="300" alt="" />
 </div>

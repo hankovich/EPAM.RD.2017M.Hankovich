@@ -2,8 +2,8 @@
     .controller('IndexController', [
         '$scope', 'dataService', '$http', function ($scope, dataService, $http) {
 
-            $scope.addImg = function (name, src, album, file, description) {
-                dataService.addImg(name, src, album, file, description);
+            $scope.addImg = function (name, src, album, description) {
+                dataService.addImg(name, src, album, description);
             }
 
             dataService.getAll().then(function (response) {
@@ -15,12 +15,14 @@
             $scope.filemode = true;
 
             $scope.setFilemode = function (value) {
-                $scope.filemode = value;
-                if (value === false) {
-                    angular.element("input[type='file']").val(null);
-                    $scope.user.file = 'dd';
-                } else
-                    $scope.user.src = '';
+                if ($scope.filemode != value) {
+                    $scope.filemode = value;
+                    if (value === false) {
+                        document.getElementById("file").value = "";
+                        $scope.user.src = '';
+                    } else
+                        $scope.user.src = '';
+                }
             }
 
             $scope.editDescr = function () {
@@ -92,7 +94,7 @@
                 return response;
             }
 
-            function add(name, src, albumName, file, description) {
+            function add(name, src, albumName, description) {
 
                 var response = $http({
                     method: 'POST',
@@ -101,7 +103,6 @@
                         name: name,
                         src: src,
                         albumName: albumName,
-                        file: file,
                         description: description
                     },
                     header: { 'Accept': 'application/json' }
@@ -176,7 +177,7 @@
             return {
                 restrict: 'E',
                 replace: true,
-                scope: { name: '=', src: '=', album: '=', file: '=', description: '='},
+                scope: { name: '=', src: '=', album: '=', date: '=', description: '=', preview: '=', remove: '=', index: '=', photoid: '=' },
                 templateUrl: '/Views/Home/Preview.html'
             }
         }
@@ -198,5 +199,12 @@
                 });
             }
         }
+    }])
+    .directive('dateNow', ['$filter', function ($filter) {
+        return {
+            link: function ($scope, $element, $attrs) {
+                $element.text($filter('date')(new Date(), $attrs.dateNow));
+            }
+        };
     }])
     ;

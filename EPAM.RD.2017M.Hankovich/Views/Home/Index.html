@@ -1,16 +1,6 @@
-﻿<div ng-repeat="album in albums" class="row well">
+﻿<div ng-repeat="album in albums" ng-if="album.photos.length != 0" class="row well">
     <h2>{{album.albumName}}</h2>
     <div ng-repeat="photo in album.photos" class="col-md-4">
-        <div class="thumbnail panel-info" style="padding-top: 10px; padding-left: 10px; padding-right: 10px; padding-bottom: 10px;">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="text-primary">
-                        <h5>{{photo.name}}</h5>
-                    </div>
-                    <input type="button" id="Angl" class="btn btn-danger bottom-left" value="Delete" ng-click="remove($index, album.albumName, photo.Id)" />
-                </div>
-                <img class="col-md-8" ng-src="{{photo.src}}" alt="Description"/>
-            </div>
-        </div>
+        <preview-img name="photo.name" src="photo.src" album="album.albumName" date="photo.CreationDate" description="photo.descr" preview="false" remove="remove" index="$index" photoid="photo.Id"/>
     </div>
 </div>
