@@ -48,11 +48,11 @@ namespace EPAM.RD._2017M.Hankovich.Controllers
             return result;
         }
 
-        public void RemoveImg(PhotoToDeleteModel model)
+        public ActionResult RemoveImg(PhotoToDeleteModel model)
         {
             //some removing logic here
             var a = model.AlbumName;
-            //return false;
+            return Json(false);
         }
 
         [HttpPost]
@@ -68,12 +68,13 @@ namespace EPAM.RD._2017M.Hankovich.Controllers
             }
             else
             {
+                var a = src.Substring(src.IndexOf('/') + 1, src.IndexOf(';') - src.IndexOf('/') - 1);
                 pseudopath = $"{RsHash(src)}.{src.Split('/', ';')[1]}";
             }
 
             string path = GetFullPathToImg(pseudopath);
             GalleryModel model = new GalleryModel();
-
+            
             AddAlbum(albumName);
 
             if (model.Photos.Count(x => x.Path == path) == 0)

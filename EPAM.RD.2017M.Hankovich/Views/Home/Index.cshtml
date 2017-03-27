@@ -12,10 +12,30 @@
     <script src="~/Scripts/angular-route.js"></script>
     <script src="~/Scripts/scripts/IndexController.js"></script>
 </head>
-<body ng-controller="IndexController">
+<body>
 <header class="container well">
-    <h1>Angular main page</h1>
-    <a href="AngularRoute/Index">Index</a> | <a href="AngularRoute/Temp">Temp</a> | <a href="AngularRoute/Edit">Edit</a>
+    <div class="col-md-8">
+        <h1>Angular main page</h1>
+        <a href="AngularRoute/Gallery">Index</a> | <a href="AngularRoute/Add">Add Picture</a> | <a href="AngularRoute/EditDescription">Edit Description</a> | <a href="AngularRoute/Register">Register</a>
+    </div>
+    <div class="col-md-4">
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="pull-right" ng-controller="RegisterController">Hello, <a ng-click="logoff()">@User.Identity.Name</a></div>
+        }
+        else
+        {
+            <div class="pull-right bottom" ng-controller="RegisterController">
+                <div class="asd">
+                    <input type="text" name="ALbName" id="albname" ng-model="registerModel.login" class="form-control" placeholder="Enter login" />
+                
+                    <input type="password" name="Name" id="name" ng-model="registerModel.password" class="form-control" placeholder="Enter password" />
+                
+                    <input type="button" value="Log in" ng-click="login()" class="form-control btn btn-success" />
+                </div>
+            </div>
+        }
+    </div>
 </header>
     <div class="container">
         <div ng-view>Loading...</div>

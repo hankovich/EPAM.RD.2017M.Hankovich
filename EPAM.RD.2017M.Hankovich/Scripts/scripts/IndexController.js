@@ -3,6 +3,9 @@
         '$scope', 'dataService', '$http', function ($scope, dataService, $http) {
 
             $scope.addImg = function (name, src, album, description) {
+                if (name === '' || src === '' || album === '' || description === '')
+                    alert('All fields are required!');
+
                 dataService.addImg(name, src, album, description);
             }
 
@@ -15,7 +18,7 @@
             $scope.filemode = true;
 
             $scope.setFilemode = function (value) {
-                if ($scope.filemode != value) {
+                if ($scope.filemode !== value) {
                     $scope.filemode = value;
                     if (value === false) {
                         document.getElementById("file").value = "";
@@ -38,46 +41,54 @@
             $scope.descr = dataService.descr();
 
             $scope.remove = function (index, albumName, photoId) {
-                //dataService.remove(index, albumName);
-                for (var i = 0; i < $scope.albums.length; i++) {
-                    if ($scope.albums[i].albumName === albumName) {
-                        $scope.albums[i].photos.splice(index, 1);
+                dataService.remove(albumName, photoId).then(function(response) {
+
+                    if (response.data) {
+                        for (var i = 0; i < $scope.albums.length; i++) {
+                            if ($scope.albums[i].albumName === albumName) {
+                                $scope.albums[i].photos.splice(index, 1);
+                            }
+                        }
+                        alert('success');
+                    } else {
+                        alert('fail');
                     }
-                }
-
-                //
-                var request = {
-                    method: 'POST',
-                    url: '/Home/RemoveImg',
-                    data: { albumname: albumName, photoid: photoId }
-                };
-
-                $http(request)
-                    .then(function (response) {
-                        //alert('success');
-                    },
-                        function (response) {
-                            //alert('fail');
-                        });
-                //
-            }
-
-            $scope.add = function (name, src, album) {
-                if (!dataService.add(name, src, album))
-                    alert("Name, src and album is required!");
-            }
+                });
+            };
 
             $scope.user = {
                 name: "",
                 src: "",
                 album: "",
-                file: "",
                 descripton: ""
             };
 
             $scope.newDescr = $scope.descr;
         }
     ])
+    .controller('RegisterController', ['$scope', 'accountService', function ($scope, accountService) {
+        $scope.registerModel = {
+            login: "",
+            password: "",
+            confPass: ""
+        }
+
+        $scope.registerUser = function () {
+            accountService.register($scope.registerModel).then(function (response) {
+                alert(response.data);
+            });
+
+            $scope.isAuthenticated = accountService.isAuthenticated();
+        }
+
+        $scope.logoff = function () {
+            accountService.logoff();
+        }
+
+        $scope.login = function () {
+            accountService.login($scope.registerModel);
+        }
+    }])
     .service('dataService', [
         '$http', function ($http) {
 
@@ -107,30 +118,16 @@
                     },
                     header: { 'Accept': 'application/json' }
                 });
-                /*if (name !== "" && src !== "" && album !== "") {
-                    var needSomeNewAlbum = true;
-                    for (var i = 0; i < albums.length; i++) {
-                        if (albums[i].albumName === album) {
-                            albums[i].photos.push({ name, src });
-                            needSomeNewAlbum = false;
-                        }
-                    }
-
-                    if (needSomeNewAlbum) {
-                        albums.push({ albumName: album, photos: [{ name: name, src: src }] });
-                    }
-                    return true;
-                } else {
-                    return false;
-                }*/
             };
 
-            function remove(index, albumName) {
-                for (var i = 0; i < albums.length; i++) {
-                    if (albums[i].albumName === albumName) {
-                        albums[i].photos.splice(index, 1);
-                    }
-                }
+            function remove(albumName, photoId) {
+                var request = {
+                    method: 'POST',
+                    url: '/Home/RemoveImg',
+                    data: { albumname: albumName, photoid: photoId }
+                };
+
+                return $http(request);
             };
 
             function editDescr(newDescr) {
@@ -146,6 +143,60 @@
             }
         }
     ])
+    .service('accountService', ['$http', function ($http) {
+        var register = function (registerForm) {
+            var request = {
+                method: "POST",
+                url: "/Account/Register/",
+                data: {
+                    login: registerForm.login,
+                    password: registerForm.password
+                },
+                headers: { 'Accept': 'application/json' }
+            }
+            return $http(request);
+        };
+
+        var isAuthenticated = function () {
+            var response = {
+                method: "POST",
+                url: "/Account/IsAuthenticated/",
+                headers: { 'Accept': 'application/json' }
+            }
+            $http(response).then(function (response) {
+                return response.data;
+            });
+        };
+
+        var login = function (registerForm) {
+            var response = {
+                method: "POST",
+                url: "/Account/Login/",
+                data: {
+                    login: registerForm.login,
+                    password: registerForm.password
+                },
+                headers: { 'Accept': 'application/json' }
+            }
+            $http(response);
+        };
+
+        var logoff = function () {
+            var response = {
+                method: "POST",
+                url: "/Account/LogOff/",
+                headers: { 'Accept': 'application/json' }
+            }
+            $http(response);
+        };
+
+        return {
+            register: register,
+            logoff: logoff,
+            login: login,
+            isAuthenticated: isAuthenticated
+        }
+    }])
     .config([
         '$locationProvider', '$routeProvider', function ($locationProvider, $routeProvider) {
             $routeProvider
@@ -153,17 +204,22 @@
                     templateUrl: '/',
                     controller: 'IndexController'
                 })
-                .when('/AngularRoute/Index/', {
-                    templateUrl: '/Views/Home/Index.html',
+                .when('/AngularRoute/Gallery/', {
+                    templateUrl: '/Views/Home/Gallery.html',
                     controller: 'IndexController'
                 })
-                .when('/AngularRoute/Temp/', {
-                    templateUrl: '/Views/Home/View.html',
+                .when('/AngularRoute/Add/', {
+                    templateUrl: '/Views/Home/Add.html',
                     controller: 'IndexController'
                 })
-                .when('/AngularRoute/Edit/', {
-                    templateUrl: '/Views/Home/Edit.html',
+                .when('/AngularRoute/EditDescription/', {
+                    templateUrl: '/Views/Home/EditDescription.html',
                     controller: 'IndexController'
+                })
+                .when('/AngularRoute/Register/',
+                {
+                    templateUrl: '/Views/Account/Register.html',
+                    controller: 'RegisterController'
                 })
                 .otherwise({
                     redirectTo: '/'

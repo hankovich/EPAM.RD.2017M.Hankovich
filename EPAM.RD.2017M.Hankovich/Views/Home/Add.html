@@ -1,0 +1,18 @@
+﻿<div class="well row" ng-controller="IndexController">
+    <div class="col-md-6">
+        <input type="text" class="form-control asd" id="name" placeholder="Enter name" ng-model="user.name"/>
+        <input type="text" class="form-control asd" id="album" placeholder="Enter album" ng-model="user.album"/>
+        <div class="btn-group asd">
+            <input type="button" class="btn btn-primary" value="Url" ng-click="setFilemode(false)"/>
+            <input type="button" class="btn btn-primary" value="File" ng-click="setFilemode(true)" />
+        </div>        
+        <input type="file" class="form-control asd" id="file" ng-show="filemode" name="file" file-change="user.src" ng-model="user.src"/>
+        <input type="text" class="form-control asd" id="src" ng-show="!filemode" placeholder="Enter src" ng-model="user.src" />
+
+        <textarea ng-model="user.description" placeholder="Enter description" class="form-control asd"></textarea> 
+        <input type="button" class="btn btn-primary asd" value="Add" ng-click="addImg(user.name, user.src, user.album, user.description)"/>
+    </div>
+    <div class="col-md-4">
+        <preview-img name="user.name" src="user.src" album="user.album" file="user.file" description="user.description" preview="true"/>
+    </div>
+</div>

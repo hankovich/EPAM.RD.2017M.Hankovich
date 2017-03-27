@@ -1,6 +1,0 @@
-﻿<div ng-repeat="album in albums" ng-if="album.photos.length != 0" class="row well">
-    <h2>{{album.albumName}}</h2>
-    <div ng-repeat="photo in album.photos" class="col-md-4">
-        <preview-img name="photo.name" src="photo.src" album="album.albumName" date="photo.CreationDate" description="photo.descr" preview="false" remove="remove" index="$index" photoid="photo.Id"/>
-    </div>
-</div>

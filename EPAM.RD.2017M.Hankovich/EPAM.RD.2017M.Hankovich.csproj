@@ -156,25 +156,33 @@
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\scripts\IndexController.js" />
-    <Content Include="Views\Home\Edit.html" />
-    <Content Include="Views\Home\Index.html" />
+    <Content Include="Views\Account\Register.html" />
+    <Content Include="Views\Home\EditDescription.html" />
+    <Content Include="Views\Home\Gallery.html" />
     <Content Include="Views\Home\Preview.html" />
-    <Content Include="Views\Home\View.html" />
+    <Content Include="Views\Home\Add.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AlbumModel.cs" />
+    <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\PhotoModel.cs" />
     <Compile Include="Models\PhotoToDeleteModel.cs" />
+    <Compile Include="Models\RegisterModel.cs" />
     <Compile Include="ORM\Album.cs" />
     <Compile Include="ORM\GalleryModel.cs" />
     <Compile Include="ORM\Photo.cs" />
+    <Compile Include="ORM\Role.cs" />
+    <Compile Include="ORM\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\CustomMembershipProvider.cs" />
+    <Compile Include="Providers\CustomRoleProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />

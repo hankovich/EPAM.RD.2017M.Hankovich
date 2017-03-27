@@ -14,6 +14,8 @@ namespace EPAM.RD._2017M.Hankovich.ORM
 
         public virtual DbSet<Album> Albums { get; set; }
         public virtual DbSet<Photo> Photos { get; set; }
+        public virtual DbSet<Role> Roles { get; set; }
+        public virtual DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -36,6 +38,23 @@ namespace EPAM.RD._2017M.Hankovich.ORM
 
             modelBuilder.Entity<Photo>()
                 .Property(e => e.Path)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Role>()
+                .Property(e => e.Name)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Role>()
+                .HasMany(e => e.Users)
+                .WithRequired(e => e.Role)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<User>()
+                .Property(e => e.Login)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<User>()
+                .Property(e => e.Password)
                 .IsUnicode(false);
         }
     }

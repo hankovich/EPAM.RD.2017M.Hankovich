@@ -1,13 +1,14 @@
 ﻿<div class="thumbnail panel-info awesome-view asd">
     <div>
         <h3 class="asd">{{name}}</h3>
-        <div ng-if="preview" date-now="MMM dd yyyy hh:mm" class="asd"/>
-        <div ng-if="!preview" class="asd">
-            {{date}}
-        </div>
     </div>
     <img ng-src="{{src}}" width="300" ng-show="src != ''" />
-    
+
+    <div ng-if="preview" date-now="MMM dd yyyy hh:mm" class="asd" />
+    <div ng-if="!preview" class="asd">
+        {{date}}
+    </div>
+
     <div class="caption">
         <h4>{{description}}</h4>
     </div>
