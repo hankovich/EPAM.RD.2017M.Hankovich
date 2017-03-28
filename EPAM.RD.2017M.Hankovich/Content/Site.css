@@ -12,6 +12,11 @@
     padding-right: 15px;
 }
 
+.textarea {
+  width: 300px;
+  height: 150px;
+}
+
 .asd {
     margin: 10px;
 }
@@ -30,8 +35,67 @@
 }
 /* Set width on the form input elements since they're 100% wide by default */
 input,
-select,
-textarea {
+select, .ddd {
     max-width: 280px;
+}
+
+
+
+.containerC {
+    overflow: hidden;
+    font-family: Arial;
+}
+
+.containerC a {
+    float: left;
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.dropdownC {
+    float: left;
+    overflow: hidden;
+}
+
+.dropdownC .dropbtnC {
+    font-size: 16px;    
+    border: none;
+    outline: none;
+    color: #333;
+    padding: 14px 16px;
+    background-color: inherit;
+}
+
+.containerC a:hover, .dropdownC:hover .dropbtnC {
+    /*background-color: red;*/
+}
+
+.dropdownC-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdownC-content a {
+    float: none;
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.dropdownC-content a:hover {
+    background-color: #ddd;
+}
+
+.dropdownC:hover .dropdownC-content {
+    display: block;
 }
 

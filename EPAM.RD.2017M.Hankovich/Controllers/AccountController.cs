@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Web.Security;
 using EPAM.RD._2017M.Hankovich.Models;
@@ -27,21 +29,35 @@ namespace EPAM.RD._2017M.Hankovich.Controllers
             return Json(User.Identity.Name);
         }
 
-        public bool IsInRole(string role)
+        public ActionResult IsInRole(string role)
         {
-            return User.IsInRole(role);
+            return Json(User.IsInRole(role));
+        }
+
+        public ActionResult Description()
+        {
+            var descr = System.Configuration.ConfigurationManager.AppSettings["description"];
+            return Json(descr);
+        }
+
+        public ActionResult ChangeDescription(string newDescription)
+        {
+
+            Configuration config = WebConfigurationManager.OpenWebConfiguration("/");
+            string oldValue = config.AppSettings.Settings["description"].Value;
+            config.AppSettings.Settings["description"].Value = newDescription;
+            config.Save(ConfigurationSaveMode.Modified);
+
+
+            //System.Configuration.ConfigurationManager.AppSettings["description"] = newDescription;
+            //System.Configuration.ConfigurationManager.AppSettings
+            return Json(true);
         }
 
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
             return Json(true);
-            ViewBag.ReturnUrl = returnUrl;
-            if (Request.IsAjaxRequest())
-            {
-                return PartialView();
-            }
-            return View();
         }
 
         [HttpPost]

@@ -1,4 +1,4 @@
-﻿angular.module('books', ['ngRoute'])
+﻿angular.module('books', ['ngRoute', 'ngSanitize'])
     .controller('IndexController', [
         '$scope', 'dataService', '$http', function ($scope, dataService, $http) {
 
@@ -52,84 +52,93 @@
             
         }
     ])
-    .controller('RegisterController', ['$scope', 'accountService', '$location', function ($scope, accountService, $location) {
-        $scope.newDescr = $scope.descr;
-        $scope.descrEditMode = false;
-        $scope.editDescr = function () {
-            $scope.descrEditMode = true;
+    .controller('RegisterController', ['$scope', '$rootScope', 'accountService', '$location', function ($scope, $rootScope, accountService, $location) {
+        $rootScope.newDescr = $rootScope.descr;
+        $rootScope.descrEditMode = false;
+        $rootScope.editDescr = function () {
+            $rootScope.descrEditMode = true;
         }
 
-        $scope.saveDescr = function (newDescr) {
+        $rootScope.saveDescr = function (newDescr) {
             accountService.editDescr(newDescr);
-            $scope.descrEditMode = false;
-            $scope.descr = accountService.descr();
+            $rootScope.descrEditMode = false;
+            $rootScope.descr = newDescr;
+            //accountService.descr().then(function (response) {
+            //    $rootScope.descr = response.data;
+            //});
         }
 
-        $scope.descr = accountService.descr();
+        accountService.descr().then(function(response) {
+            $rootScope.descr = response.data;
+        });
 
-        $scope.isAuthenticated = false;
+        $rootScope.isAuthenticated = false;
 
-        $scope.registerModel = {
+        $rootScope.registerModel = {
             login: "",
             password: ""
         }
 
-        $scope.registerUser = function () {
-            accountService.register($scope.registerModel).then(function(response) {
-                accountService.login($scope.registerModel).then(function () {
-                    accountService.isAuthenticated().then(function(response) {
-                        $scope.isAuthenticated = response.data;
-                        if ($scope.isAuthenticated) {
+        $rootScope.registerUser = function () {
+            accountService.register($rootScope.registerModel).then(function (response) {
+                accountService.login($rootScope.registerModel).then(function () {
+                    accountService.isAuthenticated().then(function (response) {
+                        $rootScope.isAuthenticated = response.data;
+                        if ($rootScope.isAuthenticated) {
 
-                            accountService.userName().then(function(response) {
-                                $scope.userName = response.data;
+                            accountService.userName().then(function (response) {
+                                $rootScope.userName = response.data;
                             });
 
-                            $location.url('/AngularRoute/Gallery');
+                            //$location.url('/AngularRoute/Gallery');
                         }
                     });
                 });
             });
-            $scope.$evalAsync();
-
-
         }
 
-        $scope.logoff = function () {
-            accountService.logoff().then(function() {
-                accountService.isAuthenticated().then(function(response) {
-                    $scope.isAuthenticated = response.data;
+        $rootScope.logoff = function () {
+            accountService.logoff().then(function () {
+                accountService.isAuthenticated().then(function (response) {
+                    $rootScope.isAuthenticated = response.data;
+                });
+                accountService.isInRole('Admin').then(function (response) {
+                    $rootScope.isInAdminRole = response.data;
                 });
             });
+            //$location.url('/AngularRoute/Index');
         }
 
-        $scope.login = function() {
-                accountService.login($scope.registerModel).then(function(response) {
-                    accountService.isAuthenticated().then(function(response) {
-                        $scope.isAuthenticated = response.data;
-                        if ($scope.isAuthenticated) {
-                            $scope.registerModel.password = $scope.registerModel.login = '';
-                        }
-                    });
-                    accountService.userName().then(function(response) {
-                        $scope.userName = response.data;
-                    });
+        $rootScope.login = function () {
+            accountService.login($rootScope.registerModel).then(function (response) {
+                accountService.isAuthenticated().then(function (response) {
+                    $rootScope.isAuthenticated = response.data;
+                    if ($rootScope.isAuthenticated) {
+                        $rootScope.registerModel.password = $rootScope.registerModel.login = '';
+                    }
                 });
-            }
+                accountService.userName().then(function (response) {
+                    $rootScope.userName = response.data;
+                });
+                accountService.isInRole('Admin').then(function (response) {
+                    $rootScope.isInAdminRole = response.data;
+                });
+            });
+            //$location.url('/AngularRoute/Index');
+        }
 
-        accountService.userName().then(function(response) {
-        $scope.userName = response.data;
+        accountService.userName().then(function (response) {
+            $rootScope.userName = response.data;
         });
 
         accountService.isAuthenticated().then(function (response) {
-            $scope.isAuthenticated = response.data;
+            $rootScope.isAuthenticated = response.data;
         });
 
-        $scope.isInRole = function(roleName) {
-            accountService.isInRole(roleName).then(function(response) {
-                return response;
-            });
-        };
+        accountService.isInRole('Admin').then(function(response) {
+            $rootScope.isInAdminRole = response.data;
+        });
+
         }])
     .service('dataService', [
         '$http', function ($http) {
@@ -237,15 +246,24 @@
             return $http(response);
         };
 
-        var text = "Descr";
-
         function descr() {
-            return text;
+            var response = {
+                method: "POST",
+                url: "/Account/Description/",
+                headers: { 'Accept': 'application/json' }
+            }
+            return $http(response);
         }
 
 
         function editDescr(newDescr) {
-            text = newDescr;
+            var response = {
+                method: "POST",
+                url: "/Account/ChangeDescription/",
+                data: {newDescription: newDescr},
+                headers: { 'Accept': 'application/json' }
+            }
+            return $http(response);
         }
 
 
@@ -326,4 +344,18 @@
             }
         };
     }])
+.filter('formatText', function () {
+    return function (input) {
+        if (!input) return input;
+        var output = input
+          //replace possible line breaks.
+          .replace(/(\r\n|\r|\n)/g, '<br/>')
+          //replace tabs
+          .replace(/\t/g, '&nbsp;&nbsp;&nbsp;')
+          //replace spaces.
+          .replace(/ /g, '&nbsp;');
+
+        return output;
+    };
+});
     ;

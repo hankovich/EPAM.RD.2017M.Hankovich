@@ -4,7 +4,8 @@
     </div>
     <img ng-src="{{src}}" width="300" ng-show="src != ''" />
 
-    <div ng-if="preview" date-now="MMM dd yyyy hh:mm" class="asd" />
+    <div ng-if="preview" date-now="MMM dd, yyyy hh:mm" class="asd"/>
+
     <div ng-if="!preview" class="asd">
         {{date}}
     </div>
