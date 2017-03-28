@@ -14,12 +14,17 @@ namespace EPAM.RD._2017M.Hankovich.Controllers
         public ActionResult LogOff()
         {
             FormsAuthentication.SignOut();
-            return RedirectToAction("Login", "Account");
+            return Json(true);
         }
 
-        public bool IsAuthenticated()
+        public ActionResult IsAuthenticated()
         {
-            return User.Identity.IsAuthenticated;
+            return Json(User.Identity.IsAuthenticated);
+        }
+
+        public ActionResult UserName()
+        {
+            return Json(User.Identity.Name);
         }
 
         public bool IsInRole(string role)
@@ -30,6 +35,7 @@ namespace EPAM.RD._2017M.Hankovich.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            return Json(true);
             ViewBag.ReturnUrl = returnUrl;
             if (Request.IsAjaxRequest())
             {

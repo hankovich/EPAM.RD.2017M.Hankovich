@@ -13,8 +13,7 @@
                 $scope.albums = response.data;
             });
 
-            $scope.descrEditMode = false;
-
+            
             $scope.filemode = true;
 
             $scope.setFilemode = function (value) {
@@ -27,18 +26,6 @@
                         $scope.user.src = '';
                 }
             }
-
-            $scope.editDescr = function () {
-                $scope.descrEditMode = true;
-            }
-
-            $scope.saveDescr = function (newDescr) {
-                dataService.editDescr(newDescr);
-                $scope.descrEditMode = false;
-                $scope.descr = dataService.descr();
-            }
-
-            $scope.descr = dataService.descr();
 
             $scope.remove = function (index, albumName, photoId) {
                 dataService.remove(albumName, photoId).then(function(response) {
@@ -59,44 +46,93 @@
             $scope.user = {
                 name: "",
                 src: "",
-                album: "",
-                descripton: ""
+                album: ""
             };
 
-            $scope.newDescr = $scope.descr;
+            
         }
     ])
-    .controller('RegisterController', ['$scope', 'accountService', function ($scope, accountService) {
+    .controller('RegisterController', ['$scope', 'accountService', '$location', function ($scope, accountService, $location) {
+        $scope.newDescr = $scope.descr;
+        $scope.descrEditMode = false;
+        $scope.editDescr = function () {
+            $scope.descrEditMode = true;
+        }
+
+        $scope.saveDescr = function (newDescr) {
+            accountService.editDescr(newDescr);
+            $scope.descrEditMode = false;
+            $scope.descr = accountService.descr();
+        }
+
+        $scope.descr = accountService.descr();
+
+        $scope.isAuthenticated = false;
+
         $scope.registerModel = {
             login: "",
-            password: "",
-            confPass: ""
+            password: ""
         }
 
         $scope.registerUser = function () {
-            accountService.register($scope.registerModel).then(function (response) {
-                alert(response.data);
-            });
+            accountService.register($scope.registerModel).then(function(response) {
+                accountService.login($scope.registerModel).then(function () {
+                    accountService.isAuthenticated().then(function(response) {
+                        $scope.isAuthenticated = response.data;
+                        if ($scope.isAuthenticated) {
 
-            $scope.isAuthenticated = accountService.isAuthenticated();
+                            accountService.userName().then(function(response) {
+                                $scope.userName = response.data;
+                            });
+
+                            $location.url('/AngularRoute/Gallery');
+                        }
+                    });
+                });
+            });
+            $scope.$evalAsync();
+
+
         }
 
         $scope.logoff = function () {
-            accountService.logoff();
+            accountService.logoff().then(function() {
+                accountService.isAuthenticated().then(function(response) {
+                    $scope.isAuthenticated = response.data;
+                });
+            });
         }
 
-        $scope.login = function () {
-            accountService.login($scope.registerModel);
-        }
-    }])
+        $scope.login = function() {
+                accountService.login($scope.registerModel).then(function(response) {
+                    accountService.isAuthenticated().then(function(response) {
+                        $scope.isAuthenticated = response.data;
+                        if ($scope.isAuthenticated) {
+                            $scope.registerModel.password = $scope.registerModel.login = '';
+                        }
+                    });
+                    accountService.userName().then(function(response) {
+                        $scope.userName = response.data;
+                    });
+                });
+            }
+
+        accountService.userName().then(function(response) {
+        $scope.userName = response.data;
+        });
+
+        accountService.isAuthenticated().then(function (response) {
+            $scope.isAuthenticated = response.data;
+        });
+
+        $scope.isInRole = function(roleName) {
+            accountService.isInRole(roleName).then(function(response) {
+                return response;
+            });
+        };
+        }])
     .service('dataService', [
         '$http', function ($http) {
-
-            var text = "Descr";
-
-            function descr() {
-                return text;
-            }
 
             function getAll() {
                 var response = $http({
@@ -130,16 +166,10 @@
                 return $http(request);
             };
 
-            function editDescr(newDescr) {
-                text = newDescr;
-            }
-
             return {
                 getAll: getAll,
                 addImg: add,
-                remove: remove,
-                descr: descr,
-                editDescr: editDescr
+                remove: remove
             }
         }
     ])
@@ -157,15 +187,32 @@
             return $http(request);
         };
 
+        var isInRole = function (roleName) {
+            var response = {
+                method: "POST",
+                url: "/Account/IsInRole/",
+                data: {role: roleName},
+                headers: { 'Accept': 'application/json' }
+            }
+            return $http(response);
+        };
+
         var isAuthenticated = function () {
             var response = {
                 method: "POST",
                 url: "/Account/IsAuthenticated/",
                 headers: { 'Accept': 'application/json' }
             }
-            $http(response).then(function (response) {
-                return response.data;
-            });
+            return $http(response);
+        };
+
+        var userName = function () {
+            var response = {
+                method: "POST",
+                url: "/Account/UserName/",
+                headers: { 'Accept': 'application/json' }
+            }
+            return $http(response);
         };
 
         var login = function (registerForm) {
@@ -178,7 +225,7 @@
                 },
                 headers: { 'Accept': 'application/json' }
             }
-            $http(response);
+            return $http(response);
         };
 
         var logoff = function () {
@@ -187,14 +234,30 @@
                 url: "/Account/LogOff/",
                 headers: { 'Accept': 'application/json' }
             }
-            $http(response);
+            return $http(response);
         };
+
+        var text = "Descr";
+
+        function descr() {
+            return text;
+        }
+
+
+        function editDescr(newDescr) {
+            text = newDescr;
+        }
+
 
         return {
             register: register,
             logoff: logoff,
             login: login,
-            isAuthenticated: isAuthenticated
+            isAuthenticated: isAuthenticated,
+            userName: userName,
+            isInRole: isInRole,
+            descr: descr,
+            editDescr: editDescr
         }
     }])
     .config([
@@ -212,8 +275,8 @@
                     templateUrl: '/Views/Home/Add.html',
                     controller: 'IndexController'
                 })
-                .when('/AngularRoute/EditDescription/', {
-                    templateUrl: '/Views/Home/EditDescription.html',
+                .when('/AngularRoute/Index/', {
+                    templateUrl: '/Views/Home/Index.html',
                     controller: 'IndexController'
                 })
                 .when('/AngularRoute/Register/',

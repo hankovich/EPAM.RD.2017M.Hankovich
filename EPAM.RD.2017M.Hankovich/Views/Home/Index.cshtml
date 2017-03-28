@@ -14,27 +14,27 @@
 </head>
 <body>
 <header class="container well">
-    <div class="col-md-8">
+    <div class="col-md-6">
         <h1>Angular main page</h1>
-        <a href="AngularRoute/Gallery">Index</a> | <a href="AngularRoute/Add">Add Picture</a> | <a href="AngularRoute/EditDescription">Edit Description</a> | <a href="AngularRoute/Register">Register</a>
+        <a href="AngularRoute/Index">Index</a> | <a href="AngularRoute/Gallery">Gallery</a> | <a href="AngularRoute/Add">Add Picture</a> | <a href="AngularRoute/Register">Register</a>
     </div>
-    <div class="col-md-4">
-        @if (User.Identity.IsAuthenticated)
-        {
-            <div class="pull-right" ng-controller="RegisterController">Hello, <a ng-click="logoff()">@User.Identity.Name</a></div>
-        }
-        else
-        {
-            <div class="pull-right bottom" ng-controller="RegisterController">
-                <div class="asd">
-                    <input type="text" name="ALbName" id="albname" ng-model="registerModel.login" class="form-control" placeholder="Enter login" />
-                
-                    <input type="password" name="Name" id="name" ng-model="registerModel.password" class="form-control" placeholder="Enter password" />
-                
-                    <input type="button" value="Log in" ng-click="login()" class="form-control btn btn-success" />
+    <div class="col-md-6" ng-controller="RegisterController">
+        <h1></h1>
+        <div ng-show="isAuthenticated" class="pull-right">Hello, <a ng-click="logoff()">{{userName}}</a></div>
+        {{isAuthenticated}}
+        <div ng-if="!isAuthenticated" class="bottom-right vcenter">
+            <div class="row">
+                <div class="col-md-4" style="padding-right: 5px; padding-left: 5px;">
+                    <input type="text" name="login" ng-model="registerModel.login" class="form-control" placeholder="Enter login" />
+                </div>
+                <div class="col-md-4" style="padding-right: 5px; padding-left: 5px;">
+                    <input type="password" name="password" ng-model="registerModel.password" class="form-control" placeholder="Enter password"/>
+                </div>
+                <div class="col-md-4" style="padding-right: 5px; padding-left: 5px;">
+                    <input type="button" value="Log in" ng-click="login()" class="form-control-static btn btn-success" />
                 </div>
             </div>
-        }
+        </div>
     </div>
 </header>
     <div class="container">

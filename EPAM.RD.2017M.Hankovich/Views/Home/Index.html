@@ -1,0 +1,15 @@
+﻿<div class="well" ng-controller="RegisterController">
+    <div ng-if="isInRole('Admin')">
+        <div ng-show="!descrEditMode" class="ng-show btn-group">{{descr}}</div>
+        <div ng-show="descrEditMode" class="ng-hide row">
+            <textarea id="text" ng-model="newDescr" class="form-control btn-group"></textarea>
+            <input type="button" id="save" value="Save" class="btn btn-info btn-group" ng-click="saveDescr(newDescr)"/>
+        </div>
+        <input ng-show="!descrEditMode" class="ng-show btn btn-default btn-group" type="button" id="Change" value="Edit" ng-click="editDescr()"/>
+    </div>
+    <div ng-if="!isInRole('Admin')">
+        <p>
+            <div class="form-control">{{descr}}</div>
+        </p>
+    </div>
+</div>

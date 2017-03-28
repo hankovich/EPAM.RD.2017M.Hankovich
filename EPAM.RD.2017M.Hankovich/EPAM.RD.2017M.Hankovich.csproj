@@ -156,8 +156,9 @@
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\scripts\IndexController.js" />
+    <Content Include="Views\Account\Login.html" />
     <Content Include="Views\Account\Register.html" />
-    <Content Include="Views\Home\EditDescription.html" />
+    <Content Include="Views\Home\Index.html" />
     <Content Include="Views\Home\Gallery.html" />
     <Content Include="Views\Home\Preview.html" />
     <Content Include="Views\Home\Add.html" />

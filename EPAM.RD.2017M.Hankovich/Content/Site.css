@@ -16,6 +16,12 @@
     margin: 10px;
 }
 
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+
 .awesome-view {
     padding-top: 10px; 
     padding-left: 10px; 
