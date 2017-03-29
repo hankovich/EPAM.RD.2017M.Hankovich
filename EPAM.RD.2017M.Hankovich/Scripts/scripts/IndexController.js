@@ -1,7 +1,6 @@
 ﻿angular.module('books', ['ngRoute', 'ngSanitize'])
     .controller('IndexController', [
         '$scope', 'dataService', '$http', function ($scope, dataService, $http) {
-
             $scope.addImg = function (name, src, album, description) {
                 if (name === '' || src === '' || album === '' || description === '')
                     alert('All fields are required!');
@@ -11,8 +10,23 @@
 
             dataService.getAll().then(function (response) {
                 $scope.albums = response.data;
+                for (var i = 0; i < $scope.albums.length; i++) {
+                    for(var j = 0; j < $scope.albums[i].photos.length; j++){
+                        $scope.albums[i].photos[j].isMaxSize = false;
+                    }
+                }
             });
 
+            $scope.setMaxSize = function (photo) {
+                for (var i = 0; i < $scope.albums.length; i++) {
+                    for (var j = 0; j < $scope.albums[i].photos.length; j++) {
+                        if ($scope.albums[i].photos[j].Id != photo.Id) {
+                            $scope.albums[i].photos[j].isMaxSize = false;
+                        }
+                    }
+                }
+                photo.isMaxSize = !photo.isMaxSize;
+            }
             
             $scope.filemode = true;
 
@@ -357,5 +371,15 @@
 
         return output;
     };
-});
+})
+.directive('scrollOnClick', function () {
+    return {
+        restrict: 'A',
+        link: function (scope, $elm) {
+            $elm.on('click', function () {
+                $("body").animate({ scrollTop: $elm.offset().top }, "slow");
+            });
+        }
+    }
+})
     ;
