@@ -1,9 +1,8 @@
-﻿<div class="thumbnail panel-info awesome-view asd">
+﻿<div class="thumbnail panel-info awesome-view asd clearfix">
     <div>
         <h3 class="asd">{{name}}</h3>
     </div>
-    <img ng-src="{{src}}" ng-show="src != ''" />
-
+    <img ng-src="{{src}}" ng-show="src != ''" ng-class='{"max-size":ismaxsize==true}'/>
     <div ng-if="preview" date-now="MMM dd, yyyy hh:mm" class="asd"/>
 
     <div ng-if="!preview" class="asd">
@@ -12,9 +11,14 @@
 
     <div class="caption">
         <h4>{{description}}</h4>
-    </div>
-
-    <div ng-if="!preview">
-        <input type="button" class="btn btn-danger bottom-left" value="Delete" ng-click="remove(index, album, photoid)" />
+        <div ng-if="!preview && preview" class="pull-left">
+            <input type="button" class="btn btn-danger bottom-left" value="Delete" ng-click="remove(index, album, photoid, $event)" />
+        </div>
+        <div ng-if="!preview && !incart(photoid) && isauthenticated" class="pull-right">
+            <input type="button" class="btn btn-success bottom-left" value="Add To Cart" ng-click="addtocart(photo, $event)" />
+        </div>
+        <div ng-if="!preview && incart(photoid) && isauthenticated" class="pull-right">
+            <input type="button" class="btn btn-danger bottom-left" value="Delete From Cart" ng-click="deletefromcart(photo.Id, $event)" />
+        </div>
     </div>
 </div>

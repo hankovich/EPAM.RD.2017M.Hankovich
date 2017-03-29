@@ -1,6 +1,6 @@
 ﻿angular.module('books', ['ngRoute', 'ngSanitize'])
     .controller('IndexController', [
-        '$scope', 'dataService', '$http', function ($scope, dataService, $http) {
+        '$scope', 'dataService', 'accountService', '$http', function ($scope, dataService, accountService, $http) {
             $scope.addImg = function (name, src, album, description) {
                 if (name === '' || src === '' || album === '' || description === '')
                     alert('All fields are required!');
@@ -8,20 +8,63 @@
                 dataService.addImg(name, src, album, description);
             }
 
+                $scope.cart = [];
+
+            dataService.getCart().then(function(response) {
+                $scope.cart = response.data;
+            });
+
+            accountService.isAuthenticated().then(function (response) {
+                $scope.isAuthenticated = response.data;
+            });
+
+            $scope.inCart = function (photoid) {
+                //dataService.getCart().then(function (response) {
+                 //   $scope.cart = response.data;
+                //});
+                for (var i = 0; i < $scope.cart.length; i++) {
+                    if ($scope.cart[i].Id === photoid)
+                        return true;
+                }
+                return false;
+            }
+
+            $scope.deleteFromCart = function (photoid, $event) {
+                $event.stopPropagation();
+                dataService.deleteFromCart(photoid).then(function(response) {
+                    for (var i = 0; i < $scope.cart.length; i++) {
+                        if ($scope.cart[i].Id === photoid)
+                            $scope.cart.splice(i, 1);
+                    }
+                });
+            }
+        
+            $scope.addToCart = function (photo, $event) {
+                $event.stopPropagation();
+                dataService.addToCart(photo.Id).then(function (response) {
+                    $scope.cart = $scope.cart || [];
+                    $scope.cart.push(photo);
+                });
+            }
+
             dataService.getAll().then(function (response) {
-                $scope.albums = response.data;
-                for (var i = 0; i < $scope.albums.length; i++) {
-                    for(var j = 0; j < $scope.albums[i].photos.length; j++){
-                        $scope.albums[i].photos[j].isMaxSize = false;
+                $scope.allAlbums = response.data;
+                $scope.extensions = [];
+                for (var i = 0; i < $scope.allAlbums.length; i++) {
+                    for (var j = 0; j < $scope.allAlbums[i].photos.length; j++) {
+                        $scope.allAlbums[i].photos[j].isMaxSize = false;
+                        if (!$scope.extensions.includes($scope.allAlbums[i].photos[j].src.substring($scope.allAlbums[i].photos[j].src.lastIndexOf('.') + 1))) {
+                            $scope.extensions.push($scope.allAlbums[i].photos[j].src.substring($scope.allAlbums[i].photos[j].src.lastIndexOf('.') + 1));
+                        }
                     }
                 }
             });
 
             $scope.setMaxSize = function (photo) {
-                for (var i = 0; i < $scope.albums.length; i++) {
-                    for (var j = 0; j < $scope.albums[i].photos.length; j++) {
-                        if ($scope.albums[i].photos[j].Id != photo.Id) {
-                            $scope.albums[i].photos[j].isMaxSize = false;
+                for (var i = 0; i < $scope.allAlbums.length; i++) {
+                    for (var j = 0; j < $scope.allAlbums[i].photos.length; j++) {
+                        if ($scope.allAlbums[i].photos[j].Id !== photo.Id) {
+                            $scope.allAlbums[i].photos[j].isMaxSize = false;
                         }
                     }
                 }
@@ -41,18 +84,19 @@
                 }
             }
 
-            $scope.remove = function (index, albumName, photoId) {
+            $scope.remove = function (index, albumName, photoId, $event) {
+                $event.stopPropagation();
                 dataService.remove(albumName, photoId).then(function(response) {
 
                     if (response.data) {
-                        for (var i = 0; i < $scope.albums.length; i++) {
-                            if ($scope.albums[i].albumName === albumName) {
-                                $scope.albums[i].photos.splice(index, 1);
+                        for (var i = 0; i < $scope.allAlbums.length; i++) {
+                            if ($scope.allAlbums[i].albumName === albumName) {
+                                $scope.allAlbums[i].photos.splice(index, 1);
                             }
                         }
-                        alert('success');
+                        //alert('success');
                     } else {
-                        alert('fail');
+                       // alert('fail');
                     }
                 });
             };
@@ -110,8 +154,8 @@
                 });
             });
         }
-
-        $rootScope.logoff = function () {
+         
+        $rootScope.logoff = function () {  
             accountService.logoff().then(function () {
                 accountService.isAuthenticated().then(function (response) {
                     $rootScope.isAuthenticated = response.data;
@@ -120,7 +164,7 @@
                     $rootScope.isInAdminRole = response.data;
                 });
             });
-            //$location.url('/AngularRoute/Index');
+            $location.url('/AngularRoute/Gallery');
         }
 
         $rootScope.login = function () {
@@ -138,7 +182,7 @@
                     $rootScope.isInAdminRole = response.data;
                 });
             });
-            //$location.url('/AngularRoute/Index');
+            $location.url('/AngularRoute/Gallery');
         }
 
         accountService.userName().then(function (response) {
@@ -155,47 +199,79 @@
 
         }])
     .service('dataService', [
-        '$http', function ($http) {
+        '$http', function($http) {
 
-            function getAll() {
-                var response = $http({
-                    url: '/Home/GetAlbums'
-                });
-                return response;
-            }
+                function getAll() {
+                    var response = $http({
+                        url: '/Home/GetAlbums',
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    return response;
+                }
 
-            function add(name, src, albumName, description) {
+                function getCart() {
+                    var response = $http({
+                        url: '/Account/GetUserCart',
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    return response;
+                }
 
-                var response = $http({
-                    method: 'POST',
-                    url: '/Home/AddImg',
-                    data: {
-                        name: name,
-                        src: src,
-                        albumName: albumName,
-                        description: description
-                    },
-                    header: { 'Accept': 'application/json' }
-                });
-            };
+                function addToCart(photoid) {
+                    var response = $http({
+                        method: 'POST',
+                        url: '/Account/AddPhotoToCart/',
+                        data: { photoId: photoid },
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    return response;
+                }
 
-            function remove(albumName, photoId) {
-                var request = {
-                    method: 'POST',
-                    url: '/Home/RemoveImg',
-                    data: { albumname: albumName, photoid: photoId }
+                function deleteFromCart(photoid) {
+                    var response = $http({
+                        method: 'POST',
+                        url: '/Account/DeletePhotoFromCart',
+                        data: { photoId: photoid },
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    return response;
+                }
+
+                function add(name, src, albumName, description) {
+
+                    var response = $http({
+                        method: 'POST',
+                        url: '/Home/AddImg',
+                        data: {
+                            name: name,
+                            src: src,
+                            albumName: albumName,
+                            description: description
+                        },
+                        header: { 'Accept': 'application/json' }
+                    });
                 };
 
-                return $http(request);
-            };
+                function remove(albumName, photoId) {
+                    var request = {
+                        method: 'POST',
+                        url: '/Home/RemoveImg',
+                        data: { albumname: albumName, photoid: photoId }
+                    };
 
-            return {
-                getAll: getAll,
-                addImg: add,
-                remove: remove
+                    return $http(request);
+                };
+
+                return {
+                    getAll: getAll,
+                    addImg: add,
+                    remove: remove,
+                    getCart: getCart,
+                    addToCart: addToCart,
+                    deleteFromCart: deleteFromCart
+                }
             }
-        }
-    ])
+        ])
     .service('accountService', ['$http', function ($http) {
         var register = function (registerForm) {
             var request = {
@@ -316,6 +392,11 @@
                     templateUrl: '/Views/Account/Register.html',
                     controller: 'RegisterController'
                 })
+                .when('/AngularRoute/Cart/',
+                {
+                    templateUrl: '/Views/Home/Cart.html',
+                    controller: 'IndexController'
+                })
                 .otherwise({
                     redirectTo: '/'
                 });
@@ -328,7 +409,7 @@
             return {
                 restrict: 'E',
                 replace: true,
-                scope: { name: '=', src: '=', album: '=', date: '=', description: '=', preview: '=', remove: '=', index: '=', photoid: '=' },
+                scope: { name: '=', src: '=', album: '=', date: '=', description: '=', preview: '=', remove: '=', index: '=', photoid: '=', ismaxsize: '=', photo: '=', incart: '=', deletefromcart: '=', addtocart: '=', isauthenticated:'=' },
                 templateUrl: '/Views/Home/Preview.html'
             }
         }

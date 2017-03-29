@@ -1,9 +1,18 @@
 ﻿<div ng-controller="IndexController">
-    <div ng-repeat="album in albums" ng-if="album.photos.length != 0" class="row well">
+    
+    <select ng-model="selectedAlbum">
+        <option ng-repeat="album in allAlbums" value="{{album.albumName}}" class="form-control">{{album.albumName}}</option>
+    </select>
+
+    <select ng-model="selectedExtension">
+        <option ng-repeat="album in extensions" value="{{album}}" class="form-control">{{album}}</option>
+    </select>
+
+    <div ng-repeat="album in allAlbums" ng-if="album.photos.length != 0" class="row well">
         <h2>{{album.albumName}}</h2>
-        <div ng-repeat="photo in album.photos" ng-class='{"max-size":photo.isMaxSize==true, "min-size":photo.isMaxSize==false}' ng-click="setMaxSize(photo)">
+        <div ng-repeat="photo in album.photos" ng-class='{"col-md-12":photo.isMaxSize==true, "col-md-4":photo.isMaxSize==false}' ng-click="setMaxSize(photo)">
             <div scroll-on-click>
-                <preview-img name="photo.name" src="photo.src" album="album.albumName" date="photo.CreationDate" description="photo.descr" preview="false" remove="remove" index="$index" photoid="photo.Id" />
+                <preview-img name="photo.name" src="photo.src" album="album.albumName" date="photo.CreationDate" description="photo.descr" preview="false" remove="remove" index="$index" photoid="photo.Id" ismaxsize="photo.isMaxSize" photo="photo" incart="inCart" deletefromcart="deleteFromCart" addtocart="addToCart" isauthenticated="isAuthenticated"/>
             </div>
         </div>
     </div>

@@ -9,6 +9,12 @@ namespace EPAM.RD._2017M.Hankovich.ORM
     [Table("User")]
     public partial class User
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public User()
+        {
+            UserPhotoes = new HashSet<UserPhoto>();
+        }
+
         public int Id { get; set; }
 
         [Required]
@@ -22,5 +28,8 @@ namespace EPAM.RD._2017M.Hankovich.ORM
         public int RoleId { get; set; }
 
         public virtual Role Role { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserPhoto> UserPhotoes { get; set; }
     }
 }

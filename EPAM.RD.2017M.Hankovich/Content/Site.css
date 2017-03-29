@@ -78,10 +78,6 @@ select, .ddd {
     background-color: inherit;
 }
 
-.containerC a:hover, .dropdownC:hover .dropbtnC {
-    /*background-color: red;*/
-}
-
 .dropdownC-content {
     display: none;
     position: absolute;
@@ -109,11 +105,11 @@ select, .ddd {
 }
 
 .max-size {
-    height: calc(100vh-150px);
-    max-width: 50%;
+    max-height: 50%;
+    height: calc(100%-150px);
     /*https://jsfiddle.net/77he6stp/64/*/
     /*http://stackoverflow.com/questions/16568272/why-doesnt-the-height-of-a-container-element-increase-if-it-contains-floated-el*/
-    max-width: 100%;
+   /* max-width: 100%;*/
     clear: both;
 }
 

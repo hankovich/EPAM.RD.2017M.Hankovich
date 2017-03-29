@@ -9,6 +9,12 @@ namespace EPAM.RD._2017M.Hankovich.ORM
     [Table("Photo")]
     public partial class Photo
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Photo()
+        {
+            UserPhotoes = new HashSet<UserPhoto>();
+        }
+
         public int Id { get; set; }
 
         public int AlbumId { get; set; }
@@ -32,5 +38,8 @@ namespace EPAM.RD._2017M.Hankovich.ORM
         public string Path { get; set; }
 
         public virtual Album Album { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserPhoto> UserPhotoes { get; set; }
     }
 }

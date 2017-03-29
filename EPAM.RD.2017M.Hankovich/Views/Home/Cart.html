@@ -1,0 +1,10 @@
+﻿<div ng-controller="IndexController" class="row well">
+    <div ng-repeat="photo in cart">
+        <div class="col-md-4">
+            <div scroll-on-click>
+                <preview-img name="photo.name" src="photo.src" album="album.albumName" date="photo.CreationDate" description="photo.descr" preview="false" remove="remove" index="$index" photoid="photo.Id" ismaxsize="photo.isMaxSize" photo="photo" incart="inCart" deletefromcart="deleteFromCart" addtocart="addToCart" isauthenticated="isAuthenticated" />
+            </div>
+        </div>   
+    </div>
+</div>
+  

@@ -52,7 +52,7 @@ namespace EPAM.RD._2017M.Hankovich.Controllers
         {
             //some removing logic here
             var a = model.AlbumName;
-            return Json(false);
+            return Json(true);
         }
 
         [HttpPost]

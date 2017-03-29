@@ -161,6 +161,7 @@
     <Content Include="Scripts\scripts\IndexController.js" />
     <Content Include="Views\Account\Login.html" />
     <Content Include="Views\Account\Register.html" />
+    <Content Include="Views\Home\Cart.html" />
     <Content Include="Views\Home\Index.html" />
     <Content Include="Views\Home\Gallery.html" />
     <Content Include="Views\Home\Preview.html" />
@@ -184,6 +185,7 @@
     <Compile Include="ORM\Photo.cs" />
     <Compile Include="ORM\Role.cs" />
     <Compile Include="ORM\User.cs" />
+    <Compile Include="ORM\UserPhoto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\CustomMembershipProvider.cs" />
     <Compile Include="Providers\CustomRoleProvider.cs" />
