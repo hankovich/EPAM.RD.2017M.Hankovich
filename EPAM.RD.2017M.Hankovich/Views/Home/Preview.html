@@ -1,8 +1,8 @@
-﻿<div class="thumbnail panel-info awesome-view asd clearfix">
+﻿<div class="thumbnail panel-info awesome-view asd clearfix" id="{{photoid}}">
     <div>
         <h3 class="asd">{{name}}</h3>
     </div>
-    <img ng-src="{{src}}" ng-show="src != ''" ng-class='{"max-size":ismaxsize==true}'/>
+    <img ng-src="{{src}}" class="img-thumbnail" ng-show="src != ''" ng-class='{"max-size":ismaxsize==true}'/>
     <div ng-if="preview" date-now="MMM dd, yyyy hh:mm" class="asd"/>
 
     <div ng-if="!preview" class="asd">

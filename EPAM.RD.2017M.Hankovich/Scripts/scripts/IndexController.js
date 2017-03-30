@@ -1,6 +1,68 @@
 ﻿angular.module('books', ['ngRoute', 'ngSanitize'])
     .controller('IndexController', [
-        '$scope', 'dataService', 'accountService', '$http', function ($scope, dataService, accountService, $http) {
+        '$scope', 'dataService', 'accountService', '$http', '$timeout', '$location', '$anchorScroll',function ($scope, dataService, accountService, $http, $timeout, $location, $anchorScroll) {
+
+
+            $scope.scroll = function (photoId) {
+                $timeout(function () {
+                    $location.hash('bottom');
+
+
+                    $scope.scrollTo(photoId);
+                }, 100);
+            }
+
+
+            $scope.scrollTo = function (eID) {
+
+                // This scrolling function 
+                // is from http://www.itnewb.com/tutorial/Creating-the-Smooth-Scroll-Effect-with-JavaScript
+
+                var startY = currentYPosition();
+                var stopY = elmYPosition(eID);
+                var distance = stopY > startY ? stopY - startY : startY - stopY;
+                if (distance < 100) {
+                    scrollTo(0, stopY); return;
+                }
+                var speed = Math.round(distance / 100);
+                if (speed >= 20) speed = 20;
+                var step = Math.round(distance / 25);
+                var leapY = stopY > startY ? startY + step : startY - step;
+                var timer = 0;
+                if (stopY > startY) {
+                    for (var i = startY; i < stopY; i += step) {
+                        setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
+                        leapY += step; if (leapY > stopY) leapY = stopY; timer++;
+                    } return;
+                }
+                for (var i = startY; i > stopY; i -= step) {
+                    setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
+                    leapY -= step; if (leapY < stopY) leapY = stopY; timer++;
+                }
+
+                function currentYPosition() {
+                    // Firefox, Chrome, Opera, Safari
+                    if (self.pageYOffset) return self.pageYOffset;
+                    // Internet Explorer 6 - standards mode
+                    if (document.documentElement && document.documentElement.scrollTop)
+                        return document.documentElement.scrollTop;
+                    // Internet Explorer 6, 7 and 8
+                    if (document.body.scrollTop) return document.body.scrollTop;
+                    return 0;
+                }
+
+                function elmYPosition(eID) {
+                    var elm = document.getElementById(eID);
+                    var y = elm.offsetTop;
+                    var node = elm;
+                    while (node.offsetParent && node.offsetParent != document.body) {
+                        node = node.offsetParent;
+                        y += node.offsetTop;
+                    } return y;
+                }
+            };
+            
+
             $scope.addImg = function (name, src, album, description) {
                 if (name === '' || src === '' || album === '' || description === '')
                     alert('All fields are required!');
@@ -8,7 +70,8 @@
                 dataService.addImg(name, src, album, description);
             }
 
-                $scope.cart = [];
+            $scope.cart = [];
+            $scope.albums = [];
 
             dataService.getCart().then(function(response) {
                 $scope.cart = response.data;
@@ -49,6 +112,8 @@
 
             dataService.getAll().then(function (response) {
                 $scope.allAlbums = response.data;
+                $scope.albums = [];
+                $scope.albums.push("Show all");
                 $scope.extensions = [];
                 for (var i = 0; i < $scope.allAlbums.length; i++) {
                     for (var j = 0; j < $scope.allAlbums[i].photos.length; j++) {
@@ -57,6 +122,7 @@
                             $scope.extensions.push($scope.allAlbums[i].photos[j].src.substring($scope.allAlbums[i].photos[j].src.lastIndexOf('.') + 1));
                         }
                     }
+                    $scope.albums.push($scope.allAlbums[i].albumName);
                 }
             });
 
@@ -372,7 +438,7 @@
         '$locationProvider', '$routeProvider', function ($locationProvider, $routeProvider) {
             $routeProvider
                 .when('/AngularRoute/', {
-                    templateUrl: '/',
+                    templateUrl: '/Views/Home/Index.html',
                     controller: 'IndexController'
                 })
                 .when('/AngularRoute/Gallery/', {
@@ -398,7 +464,7 @@
                     controller: 'IndexController'
                 })
                 .otherwise({
-                    redirectTo: '/'
+                    redirectTo: '/AngularRoute/Index/'
                 });
 
             $locationProvider.html5Mode(true);
@@ -453,14 +519,21 @@
         return output;
     };
 })
-.directive('scrollOnClick', function () {
+.directive('scrollOnClick', ['$timeout', '$anchorScroll', '$location', function ($timeout, $anchorScroll, $location) {
     return {
+        scope: {
+            photoId: "="
+        },
         restrict: 'A',
-        link: function (scope, $elm) {
-            $elm.on('click', function () {
+        link: function (scope, $elm, $attrs) {
+            $timeout(function () {
+                $location.hash($attrs.photoId);
+                $anchorScroll();
+            }, 1000);
+            /*$elm.on('click', function () {
                 $("body").animate({ scrollTop: $elm.offset().top }, "slow");
-            });
+            });*/
         }
     }
-})
+}])
     ;

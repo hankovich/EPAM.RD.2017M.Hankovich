@@ -106,7 +106,7 @@ select, .ddd {
 
 .max-size {
     max-height: 50%;
-    height: calc(100%-150px);
+    height: 100px;
     /*https://jsfiddle.net/77he6stp/64/*/
     /*http://stackoverflow.com/questions/16568272/why-doesnt-the-height-of-a-container-element-increase-if-it-contains-floated-el*/
    /* max-width: 100%;*/

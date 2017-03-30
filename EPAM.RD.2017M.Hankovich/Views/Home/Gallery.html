@@ -1,17 +1,18 @@
 ﻿<div ng-controller="IndexController">
     
     <select ng-model="selectedAlbum">
-        <option ng-repeat="album in allAlbums" value="{{album.albumName}}" class="form-control">{{album.albumName}}</option>
+        <option ng-repeat="album in albums" value="{{album}}" class="form-control">{{album}}</option>
     </select>
 
-    <select ng-model="selectedExtension">
-        <option ng-repeat="album in extensions" value="{{album}}" class="form-control">{{album}}</option>
-    </select>
+    <div ng-repeat="ext in extensions" class="form-control">
+            <input type="checkbox" name="vehicle" value="{{ext}}"> {{ext}}
+            <br>
+    </div>
 
     <div ng-repeat="album in allAlbums" ng-if="album.photos.length != 0" class="row well">
         <h2>{{album.albumName}}</h2>
         <div ng-repeat="photo in album.photos" ng-class='{"col-md-12":photo.isMaxSize==true, "col-md-4":photo.isMaxSize==false}' ng-click="setMaxSize(photo)">
-            <div scroll-on-click>
+            <div ng-click="scroll(photo.Id)">
                 <preview-img name="photo.name" src="photo.src" album="album.albumName" date="photo.CreationDate" description="photo.descr" preview="false" remove="remove" index="$index" photoid="photo.Id" ismaxsize="photo.isMaxSize" photo="photo" incart="inCart" deletefromcart="deleteFromCart" addtocart="addToCart" isauthenticated="isAuthenticated"/>
             </div>
         </div>
